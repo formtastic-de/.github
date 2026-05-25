@@ -1,10 +1,49 @@
 # Formtastic
 
-**[app.formtastic.de](https://app.formtastic.de)** — Digital form management platform for creating, filling, and managing forms.
+**Mobile no-code forms for field service teams.**
+
+🌐 [formtastic.de](https://formtastic.de) · 📱 [Open the app](https://app.formtastic.de) · 🇩🇪 [Deutsche Version](./README.de.md)
 
 ---
 
-### Batch Export (CSV)
+Formtastic is the mobile form app for companies with field staff. Technicians, inspectors and service crews capture protocols, checklists and reports right on site — with photos, signatures and GPS — straight from a phone or tablet. The finished PDF is automatically delivered to the recipient by email. **Fully offline-capable. GDPR-compliant. Made in Munich.**
+
+## Why Formtastic
+
+- 🧱 **Drag-&-drop form designer** — build any form without code
+- 📄 **PDF / Word / Excel export** in your corporate design
+- 🌍 **Multilingual forms** — one template, many languages
+- 🔌 **Integrations** — Google Drive, Google Sheets, SFTP/FTP, Webhooks, CSV export
+- 📶 **100% offline-ready** — works without signal, syncs when back online
+- 🤝 **Personal onboarding service** included
+
+## Built for
+
+Companies with 5+ field staff: trades & craftsmen, service technicians, facility management, cleaning services, property management, logistics, manufacturing, medical services.
+
+[→ Solutions by industry](https://formtastic.de/en/)
+
+## Get the app
+
+<a href="https://play.google.com/store/apps/details?id=com.infopunks.formastic"><img src="https://formtastic.de/wp-content/uploads/2024/09/Get_it_on_Google_Play.png" alt="Get it on Google Play" height="40"></a>
+<a href="https://apps.apple.com/us/app/formtastic-forms/id1241888072"><img src="https://formtastic.de/wp-content/uploads/2024/09/Download_on_the_App_Store.png" alt="Download on the App Store" height="40"></a>
+
+## Resources
+
+- 📖 **Documentation:** [formtastic.de/en/documentation](https://formtastic.de/en/documentation/)
+- ❓ **FAQ:** [formtastic.de/en/faq-en](https://formtastic.de/en/faq-en/)
+- 🛟 **Support portal:** [support.formtastic.de](https://support.formtastic.de/?lang=en_US)
+- 🆘 **Need help with this repository?** [SUPPORT.md](./SUPPORT.md)
+- ⭐ **Success Stories:** [formtastic.de/en/success-stories](https://formtastic.de/en/success-stories/)
+- 💶 **Pricing:** [formtastic.de/en/pricing](https://formtastic.de/en/pricing/)
+
+---
+
+# Developer Reference
+
+This repository hosts public technical references for integrating with Formtastic. The application itself is closed source.
+
+## Batch Export (CSV)
 
 Export form submissions in bulk as a CSV file. Authentication is passed as a query parameter.
 
@@ -36,13 +75,11 @@ GET https://app.formtastic.de/export-bulk-external.csv?token=<token>&template=<i
 
 ---
 
-### Webhooks
+## Webhooks
 
-Webhooks are how Formtastic pushes form-submission events to your own systems in near real time.
-Whenever a submission changes state (for example, when it is saved or assigned), Formtastic sends
-an HTTP `POST` request to a URL you control.
+Webhooks are how Formtastic pushes form-submission events to your own systems in near real time. Whenever a submission changes state (for example, when it is saved or assigned), Formtastic sends an HTTP `POST` request to a URL you control.
 
-#### At a glance
+### At a glance
 
 - **Transport**: HTTP `POST` with `Content-Type: application/json`.
 - **Trigger**: a state change on a form submission of a template you have a webhook configured for.
@@ -50,7 +87,7 @@ an HTTP `POST` request to a URL you control.
 - **Authentication**: each webhook has its own secret token, sent with every request.
 - **Retries**: failed deliveries are retried automatically; your endpoint must be idempotent.
 
-#### Payload Schema
+### Payload Schema
 
 A delivery is a single `POST` to your URL with a JSON body of the following shape:
 
@@ -82,7 +119,7 @@ A delivery is a single `POST` to your URL with a JSON body of the following shap
 }
 ```
 
-#### Field Reference
+### Field Reference
 
 | Field | Type | Description |
 |---|---|---|
@@ -97,7 +134,7 @@ A delivery is a single `POST` to your URL with a JSON body of the following shap
 | `triggered_by` | object | The user who caused the state change (id, email). |
 | `lifecycle_state` | string | Same as `form_data.state`; provided at the top level for convenience. |
 
-#### Lifecycle States
+### Lifecycle States
 
 | State | Meaning |
 |---|---|
@@ -107,7 +144,7 @@ A delivery is a single `POST` to your URL with a JSON body of the following shap
 | `sent_saved` | Sent and saved. |
 | `removed` | Deleted/archived. |
 
-#### Authentication
+### Authentication
 
 Each webhook has its own **secret**, generated when the webhook is created. The same secret is included with every delivery so your receiver can verify the request's authenticity.
 
@@ -119,14 +156,14 @@ Your receiver should:
 
 If the secret leaks, regenerate it from the webhook detail page. The previous secret stops working immediately.
 
-#### Responding to a Delivery
+### Responding to a Delivery
 
 - **2xx** — the delivery is considered **successful**. No more attempts are made.
 - **Anything else, or a network error** — the delivery is considered **failed** and Formtastic will retry.
 
 Respond as quickly as you can. Long-running work should be done **after** acknowledging the request (e.g. by enqueuing a background job).
 
-#### Retries and Idempotency
+### Retries and Idempotency
 
 When a delivery fails, Formtastic schedules another attempt. Each attempt for the same event shares the same `run_id`, so your receiver may see the same payload more than once.
 
@@ -135,7 +172,7 @@ When a delivery fails, Formtastic schedules another attempt. Each attempt for th
 
 A run continues retrying until one attempt succeeds, the retry budget is exhausted (the run ends in `failed` state), or an administrator cancels it.
 
-#### Best Practices
+### Best Practices
 
 - **Use HTTPS** with a valid certificate.
 - **Verify the secret** on every request.
@@ -146,6 +183,11 @@ A run continues retrying until one attempt succeeds, the retry budget is exhaust
 
 ---
 
-## Links
+## Contact
 
-- **Application**: [app.formtastic.de](https://app.formtastic.de)
+**Formtastic GmbH**
+Amalienstraße 77, 80799 Munich, Germany
+📞 +49 89 7168020-90 · ✉️ [info@formtastic.de](mailto:info@formtastic.de)
+🔗 [LinkedIn](https://www.linkedin.com/company/formtastic-gmbh/)
+
+[Legal Notice](https://formtastic.de/en/legal-notice/) · [Privacy Policy](https://formtastic.de/en/privacy-policy/) · [Terms & Conditions](https://formtastic.de/en/toc/)
